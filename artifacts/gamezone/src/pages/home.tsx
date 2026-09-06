@@ -133,7 +133,6 @@ export function HomePage() {
     query: { queryKey: getListGamesQueryKey() },
   });
 
-  const featured = games[0];
   const offers = games.slice(0, 5);
   const balance = Number(user?.balance ?? 0);
   const cashoutProgress = cashoutProgressForBalance(balance);
@@ -220,8 +219,10 @@ export function HomePage() {
       <section className="space-y-4">
         <h2 className="text-lg font-semibold tracking-tight text-white">Best for you</h2>
 
-        {featured ? (
-          <OfferCard game={featured} featured formatCurrency={formatCurrency} disabled={isBanned} />
+        {games.length > 0 ? (
+          <div className="space-y-4">
+            {games.map((game) => <OfferCard key={game.id} game={game} featured formatCurrency={formatCurrency} disabled={isBanned} />)}
+          </div>
         ) : isGamesLoading ? (
           <div className="h-[390px] animate-pulse rounded-3xl bg-[#1b1c2b]" />
         ) : (
