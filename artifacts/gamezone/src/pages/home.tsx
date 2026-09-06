@@ -134,7 +134,7 @@ export function HomePage() {
   });
 
   const featured = games[0];
-  const offers = games.slice(1, 5);
+  const offers = games.slice(0, 5);
   const balance = Number(user?.balance ?? 0);
   const cashoutProgress = cashoutProgressForBalance(balance);
   const gamesPlayed = stats?.gamesPlayed ?? user?.gamesPlayed ?? 0;
