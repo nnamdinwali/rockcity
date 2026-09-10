@@ -331,18 +331,18 @@ export function ProfilePage() {
             {supportStatus && <p className="text-sm text-muted-foreground">{supportStatus}</p>}
           </div>
 
-          <div className="space-y-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+          <div className="space-y-3 border-t border-border/60 pt-6">
             <div>
-              <h3 className="text-sm font-semibold text-destructive">Delete account</h3>
+              <h3 className="text-sm font-semibold text-foreground">Delete account</h3>
               <p className="text-sm text-muted-foreground">Permanently deletes your Rockcity account, balance, play history, payout methods, and messages. This cannot be undone.</p>
             </div>
             <Input placeholder='Type "DELETE" to confirm' value={deleteConfirmText} onChange={(event) => setDeleteConfirmText(event.target.value)} />
             <Button
               type="button"
-              variant="destructive"
+              variant="outline"
               disabled={deleteConfirmText.trim().toUpperCase() !== "DELETE" || isDeletingAccount}
               onClick={() => void handleDeleteAccount()}
-              className="h-11 w-full font-bold"
+              className="h-11 w-full border-border text-sm text-muted-foreground hover:text-destructive"
             >
               {isDeletingAccount ? "Deleting…" : "Permanently delete my account"}
             </Button>
