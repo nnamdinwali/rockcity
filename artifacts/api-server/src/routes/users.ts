@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { clerkClient, getAuth } from "@clerk/express";
-import { db, usersTable, playSessionsTable, gamesTable } from "@workspace/db";
+import { db, usersTable, playSessionsTable, gamesTable, earningsTable, payoutMethodsTable, supportMessagesTable, notificationsTable } from "@workspace/db";
 import { eq, desc, sql } from "drizzle-orm";
 
 const router = Router();
@@ -146,6 +146,38 @@ router.patch("/users/me", async (req, res) => {
       .returning();
 
     return res.json(serializeUser(updated));
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// DELETE /users/me — permanently deletes the signed-in player's account and all associated data
+router.delete("/users/me", async (req, res) => {
+  try {
+    const clerkId = getAuth(req).userId;
+    if (!clerkId) return res.status(401).json({ error: "Authentication required" });
+
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.clerkId, clerkId));
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Remove every record tied to this account before the account row itself.
+    await db.delete(playSessionsTable).where(eq(playSessionsTable.userId, user.id));
+    await db.delete(earningsTable).where(eq(earningsTable.userId, user.id));
+    await db.delete(payoutMethodsTable).where(eq(payoutMethodsTable.userId, user.id));
+    await db.delete(supportMessagesTable).where(eq(supportMessagesTable.userId, user.id));
+    await db.delete(notificationsTable).where(eq(notificationsTable.userId, user.id));
+    await db.delete(usersTable).where(eq(usersTable.id, user.id));
+
+    // Also remove the underlying Clerk identity so the account can't just
+    // sign back in and land on a freshly-recreated, empty profile.
+    try {
+      await clerkClient.users.deleteUser(clerkId);
+    } catch (clerkErr) {
+      req.log.error(clerkErr, "Deleted app data but failed to delete Clerk user");
+    }
+
+    return res.status(204).send();
   } catch (err) {
     req.log.error(err);
     return res.status(500).json({ error: "Internal server error" });

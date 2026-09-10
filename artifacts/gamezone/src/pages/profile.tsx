@@ -93,6 +93,8 @@ export function ProfilePage() {
   const [supportSubject, setSupportSubject] = useState("");
   const [supportMessage, setSupportMessage] = useState("");
   const [supportStatus, setSupportStatus] = useState("");
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   useEffect(() => {
     if (user?.username) setDisplayName(user.username);
@@ -176,6 +178,23 @@ export function ProfilePage() {
       if (!response.ok) throw new Error(data.error || "Unable to send support message");
       setSupportSubject(""); setSupportMessage(""); setSupportStatus("Message sent to Rockcity support.");
     } catch (error) { setSupportStatus(error instanceof Error ? error.message : "Unable to send support message"); }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText.trim().toUpperCase() !== "DELETE") return;
+    setIsDeletingAccount(true);
+    try {
+      const response = await apiFetch("/api/users/me", { method: "DELETE" });
+      if (!response.ok && response.status !== 204) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || "Unable to delete your account");
+      }
+      toast({ title: "Account deleted", description: "Your Rockcity account and all associated data have been permanently removed." });
+      await logout();
+    } catch (error) {
+      setIsDeletingAccount(false);
+      toast({ title: "Error", description: error instanceof Error ? error.message : "Unable to delete your account", variant: "destructive" });
+    }
   };
 
   const handleSave = async () => {
@@ -310,6 +329,23 @@ export function ProfilePage() {
             <textarea className="min-h-28 w-full rounded-md border border-border bg-input px-3 py-3 text-sm" placeholder="Tell us what you need help with" value={supportMessage} onChange={(event) => setSupportMessage(event.target.value)} />
             <Button type="button" onClick={() => void handleSendSupport()} className="w-full h-12 rounded-xl font-bold">Send to support</Button>
             {supportStatus && <p className="text-sm text-muted-foreground">{supportStatus}</p>}
+          </div>
+
+          <div className="space-y-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+            <div>
+              <h3 className="text-sm font-semibold text-destructive">Delete account</h3>
+              <p className="text-sm text-muted-foreground">Permanently deletes your Rockcity account, balance, play history, payout methods, and messages. This cannot be undone.</p>
+            </div>
+            <Input placeholder='Type "DELETE" to confirm' value={deleteConfirmText} onChange={(event) => setDeleteConfirmText(event.target.value)} />
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={deleteConfirmText.trim().toUpperCase() !== "DELETE" || isDeletingAccount}
+              onClick={() => void handleDeleteAccount()}
+              className="h-11 w-full font-bold"
+            >
+              {isDeletingAccount ? "Deleting…" : "Permanently delete my account"}
+            </Button>
           </div>
 
           <Button
