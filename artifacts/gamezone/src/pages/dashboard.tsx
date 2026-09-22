@@ -69,7 +69,7 @@ export function DashboardPage() {
         <Card className="bg-card/50 border-accent/20 hover:border-accent/50 transition-colors">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-              <Coins className="w-4 h-4 text-accent" /> Total Payouts
+              <Coins className="w-4 h-4 text-accent" /> Total Coins
             </CardTitle>
           </CardHeader>
           <CardContent>

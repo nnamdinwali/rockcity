@@ -203,7 +203,7 @@ export function ProfilePage() {
       const response = await apiFetch("/api/users/me", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ countryCode, currencyCode: preferredCurrency }),
+        body: JSON.stringify({ countryCode }),
       });
       if (!response.ok) throw new Error("Country preference could not be saved");
       if (preferredCurrency !== currency) setCurrency(preferredCurrency);
@@ -218,7 +218,7 @@ export function ProfilePage() {
       {/* Header */}
       <div>
         <h1 className="text-xl font-semibold tracking-tight text-foreground">Profile</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Account details and payout preferences.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Account details and preferences.</p>
       </div>
 
       {/* User Card */}
@@ -246,7 +246,7 @@ export function ProfilePage() {
           <span className="text-sm font-medium text-foreground">{gamesPlayed}</span>
         </div>
         <div className="flex items-center justify-between py-3">
-          <span className="text-sm text-muted-foreground">Lifetime earnings</span>
+          <span className="text-sm text-muted-foreground">Lifetime coins</span>
           <span className="text-sm font-medium text-foreground">{formatCurrency(totalEarnings)}</span>
         </div>
       </div>
@@ -286,43 +286,12 @@ export function ProfilePage() {
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="preferredCurrency" className="text-sm text-muted-foreground font-normal">
-              Preferred currency
-            </Label>
-            <Select value={preferredCurrency} onValueChange={setPreferredCurrency}>
-              <SelectTrigger id="preferredCurrency" className="h-12 bg-input border-border">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {CURRENCY_CODES.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              Detected once from your IP when available. Save a currency to lock your choice across devices.
-            </p>
-          </div>
-
           <Button
             onClick={handleSave}
             className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase tracking-wider rounded-xl"
           >
             Save changes
           </Button>
-          <div className="space-y-4 border-t border-border/60 pt-6">
-            <div><h3 className="text-sm font-semibold text-foreground">Payout methods</h3><p className="text-sm text-muted-foreground">Available for {countryCode}: {payoutMethods.join(", ") || "PayPal"}. No payment is sent automatically.</p></div>
-            {payoutProfiles.length > 0 && <div className="space-y-2">{payoutProfiles.map((profile) => <div key={profile.id} className="flex items-center justify-between gap-3 border-b border-border/40 py-3 text-sm last:border-0"><span className="min-w-0 truncate">{profile.label}</span><div className="flex items-center gap-2"><span className="text-xs text-muted-foreground">Saved</span><Button type="button" variant="outline" size="sm" onClick={() => handleEditPayout(profile)}>Edit</Button></div></div>)}</div>}
-            <select value={payoutMethod} onChange={(event) => { setPayoutMethod(event.target.value); setEditingProfileId(null); }} className="h-12 w-full rounded-md border border-border bg-input px-3 text-sm">{payoutMethods.map((method) => <option key={method} value={method}>{method === "bank_transfer" ? "Direct bank transfer" : method === "paypal" ? "PayPal" : method === "opay" ? "Opay" : "PalmPay"}</option>)}</select>
-            {selectedMethodAlreadySaved && <p className="text-sm text-muted-foreground">A {payoutMethod === "bank_transfer" ? "bank transfer" : payoutMethod} account is already saved. Choose another method or press Edit above to change it.</p>}
-            <Input placeholder="Account holder name" value={payoutDetails.accountName} onChange={(event) => setPayoutDetails({ ...payoutDetails, accountName: event.target.value })} />
-            {payoutMethod === "paypal" ? <Input type="email" placeholder="PayPal email" value={payoutDetails.email} onChange={(event) => setPayoutDetails({ ...payoutDetails, email: event.target.value })} /> : payoutMethod === "bank_transfer" ? <div className="grid gap-3 sm:grid-cols-2"><Input placeholder="Bank name" value={payoutDetails.bankName} onChange={(event) => setPayoutDetails({ ...payoutDetails, bankName: event.target.value })} /><Input placeholder="Account number or IBAN" value={payoutDetails.accountNumber || payoutDetails.iban} onChange={(event) => setPayoutDetails({ ...payoutDetails, accountNumber: event.target.value, iban: event.target.value })} /></div> : <Input placeholder={`${payoutMethod === "opay" ? "Opay" : "PalmPay"} phone or account ID`} value={payoutDetails.accountIdentifier} onChange={(event) => setPayoutDetails({ ...payoutDetails, accountIdentifier: event.target.value, phone: event.target.value })} />}
-            <div className="flex gap-2"><Button type="button" disabled={selectedMethodAlreadySaved} onClick={() => void handleSavePayout()} className="flex-1">{editingProfileId ? "Update payout method" : "Save payout method"}</Button>{editingProfileId && <Button type="button" variant="outline" onClick={handleCancelEditPayout}>Cancel</Button>}</div>
-          </div>
-
           <div className="space-y-4 border-t border-border/60 pt-6">
             <div><h3 className="text-sm font-semibold text-foreground">Contact support</h3><p className="text-sm text-muted-foreground">Send a message to the Rockcity owner. Replies will appear in your notification bell.</p></div>
             <Input placeholder="Subject" value={supportSubject} onChange={(event) => setSupportSubject(event.target.value)} />
@@ -334,7 +303,7 @@ export function ProfilePage() {
           <div className="space-y-3 border-t border-border/60 pt-6">
             <div>
               <h3 className="text-sm font-semibold text-foreground">Delete account</h3>
-              <p className="text-sm text-muted-foreground">Permanently deletes your Rockcity account, balance, play history, payout methods, and messages. This cannot be undone.</p>
+              <p className="text-sm text-muted-foreground">Permanently deletes your Rockcity account, coins, play history, and messages. This cannot be undone.</p>
             </div>
             <Input placeholder='Type "DELETE" to confirm' value={deleteConfirmText} onChange={(event) => setDeleteConfirmText(event.target.value)} />
             <Button

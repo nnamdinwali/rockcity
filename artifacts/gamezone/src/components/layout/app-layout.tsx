@@ -12,7 +12,7 @@ import { useMoney } from "@/lib/currency";
 const bottomLinks = [
   { href: "/", label: "Earn", icon: IconEarn },
   { href: "/games", label: "My Offers", icon: IconOffers },
-  { href: "/earnings", label: "Cashout", icon: IconCashout },
+  { href: "/earnings", label: "Coins", icon: IconCashout },
   { href: "/leaderboard", label: "Rewards", icon: IconRewards },
 ];
 
