@@ -98,10 +98,10 @@ function PublicLanding() {
         <h1 className="max-w-xl text-4xl font-semibold tracking-tight text-white sm:text-5xl sm:leading-[1.1]">
           Play games.
           <br />
-          Get paid.
+          Earn coins.
         </h1>
         <p className="mt-5 max-w-md text-[16px] leading-7 text-zinc-400">
-          Find games, play, and watch your balance grow in one account.
+          Find games, play, and watch your coins grow in one account.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
@@ -124,7 +124,7 @@ function PublicLanding() {
           {[
             { title: 'Games', body: 'Browse what’s available and jump into a session.' },
             { title: 'Progress', body: 'Your play history and rewards stay on your profile.' },
-            { title: 'Rewards', body: 'Track earnings from the games you play.' },
+            { title: 'Rewards', body: 'Track coins earned from the games you play.' },
           ].map((item) => (
             <div key={item.title} className="bg-zinc-950 px-5 py-8 sm:px-6">
               <h2 className="text-[14px] font-semibold text-white">{item.title}</h2>
