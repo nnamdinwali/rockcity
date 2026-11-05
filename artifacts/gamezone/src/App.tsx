@@ -31,6 +31,27 @@ const queryClient = new QueryClient({
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
+function MonetagForSignedInApp({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const scriptId = 'rockcity-monetag-multitag';
+    if (document.getElementById(scriptId)) return;
+
+    const script = document.createElement('script');
+    script.id = scriptId;
+    script.src = 'https://quge5.com/88/tag.min.js';
+    script.dataset.zone = '306172';
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    document.head.appendChild(script);
+
+    return () => {
+      document.getElementById(scriptId)?.remove();
+    };
+  }, []);
+
+  return <>{children}</>;
+}
+
 function PublicLanding() {
   // Decorative game-tile background only (original icons, not scraped brand art)
   const tileIcons = [Gamepad2, Trophy, Zap, Target, Sparkles, Dice5, Crown, Rocket, Star, Swords, Coins, Gift];
@@ -261,7 +282,7 @@ function HomeRedirect() {
   const { isSignedIn } = useAppAuth();
   // The public landing page must not wait for authentication or an API cold start.
   // Signed-in users are upgraded to the app shell as soon as their session is known.
-  return isSignedIn ? <AppLayout><HomePage /></AppLayout> : <PublicLanding />;
+  return isSignedIn ? <MonetagForSignedInApp><AppLayout><HomePage /></AppLayout></MonetagForSignedInApp> : <PublicLanding />;
 }
 
 function Protected({ children }: { children: React.ReactNode }) {
@@ -269,7 +290,7 @@ function Protected({ children }: { children: React.ReactNode }) {
   if (!isLoaded && !timedOut) return <AuthLoading retry={retry} />;
   if (timedOut) return <AuthLoading error={error} retry={retry} />;
   if (!isSignedIn) return <Redirect to="/sign-in" />;
-  return <AppLayout>{children}</AppLayout>;
+  return <MonetagForSignedInApp><AppLayout>{children}</AppLayout></MonetagForSignedInApp>;
 }
 
 function Router() {
