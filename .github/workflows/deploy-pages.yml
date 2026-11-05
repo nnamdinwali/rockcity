@@ -42,6 +42,8 @@ jobs:
       - run: cp artifacts/admin/dist/index.html artifacts/gamezone/dist/public/admin/index.html
       - run: cp artifacts/admin/dist/index.html artifacts/gamezone/dist/public/admin/404.html
       - run: cp -R artifacts/admin/dist/assets artifacts/gamezone/dist/public/admin/
+      # Monetag verifies this file at the published site root.
+      - run: cp sw.js artifacts/gamezone/dist/public/sw.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
