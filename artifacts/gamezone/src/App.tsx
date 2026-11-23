@@ -70,12 +70,27 @@ function MonetagForSignedInApp({ children }: { children: React.ReactNode }) {
       document.head.appendChild(thirdScript);
     }, 120_000);
 
+    const fourthTagTimer = window.setTimeout(() => {
+      const fourthScriptId = 'rockcity-monetag-multitag-314631';
+      if (document.getElementById(fourthScriptId)) return;
+
+      const fourthScript = document.createElement('script');
+      fourthScript.id = fourthScriptId;
+      fourthScript.src = 'https://quge5.com/88/tag.min.js';
+      fourthScript.dataset.zone = '314631';
+      fourthScript.async = true;
+      fourthScript.dataset.cfasync = 'false';
+      document.head.appendChild(fourthScript);
+    }, 180_000);
+
     return () => {
       window.clearTimeout(secondTagTimer);
       window.clearTimeout(thirdTagTimer);
+      window.clearTimeout(fourthTagTimer);
       document.getElementById(scriptId)?.remove();
       document.getElementById('rockcity-monetag-multitag-314613')?.remove();
       document.getElementById('rockcity-monetag-multitag-314630')?.remove();
+      document.getElementById('rockcity-monetag-multitag-314631')?.remove();
     };
   }, []);
 
